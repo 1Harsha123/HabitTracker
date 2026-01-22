@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Habit Calendar | HabitFlow</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --light: #f8fafc;
+            --dark: #1f2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            padding-bottom: 2rem;
+        }
+        
+        .calendar-hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 4rem 0 3rem;
+            margin-bottom: 3rem;
+            border-radius: 0 0 30px 30px;
+            color: white;
+        }
+        
+        .calendar-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .calendar-glass {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .calendar-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(79, 70, 229, 0.05));
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .calendar-month {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .calendar-year {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.1);
+        }
+        
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            padding: 1.5rem 2rem 1rem;
+            background: rgba(243, 244, 246, 0.5);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e5e7eb;
+            padding: 1px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+        }
+        
+        .calendar-day:hover {
+            background: #f8fafc;
+            transform: scale(1.05);
+            z-index: 2;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .day-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        
+        .day-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .calendar-day.completed {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .calendar-day.completed .day-number {
+            color: var(--success);
+        }
+        
+        .calendar-day.today {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid var(--primary);
+        }
+        
+        .calendar-day.today .day-number {
+            color: var(--primary);
+        }
+        
+        .calendar-day.empty {
+            background: #f9fafb;
+            opacity: 0.6;
+        }
+        
+        .calendar-day.sunday {
+            background: #fef2f2;
+        }
+        
+        .completed-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+        
+        .stats-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+        
+        .back-btn {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Calendar Hero -->
+    <div class="calendar-hero">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="{% url 'dashboard' %}" class="back-btn">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+                <span class="badge rounded-pill px-3 py-2" style="background: rgba(255,255,255,0.2);">
+                    {{ completed_days }}/{{ total_days }} days completed
+                </span>
+            </div>
+            
+            <div class="text-center">
+                <h1 class="hero-title">Habit Calendar</h1>
+                <p class="lead opacity-90">
+                    Visualize your consistency and track your progress over time
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Calendar -->
+    <div class="container calendar-container">
+        <div class="calendar-glass">
+            <!-- Header -->
+            <div class="calendar-header">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="?year={{ prev_year }}&month={{ prev_month }}" class="nav-btn">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    <div>
+                        <h2 class="calendar-month">{{ month_name }} {{ year }}</h2>
+                        <div class="calendar-year">{{ completion_rate }}% completion rate</div>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <a href="?year={{ next_year }}&month={{ next_month }}" class="nav-btn">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Weekdays -->
+            <div class="weekdays">
+                {% for day in weekdays %}
+                <div class="weekday">{{ day }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="calendar-grid">
+                {% for day in calendar_data %}
+                <div class="calendar-day 
+                    {% if not day.in_current_month %}empty{% endif %}
+                    {% if day.is_today %}today{% endif %}
+                    {% if day.completed %}completed{% endif %}
+                    {% if day.is_sunday %}sunday{% endif %}">
+                    
+                    <div class="day-number">
+                        {% if day.day %}{{ day.day }}{% endif %}
+                    </div>
+                    
+                    {% if day.completed %}
+                        <div class="completed-badge"></div>
+                        <div class="day-content">
+                            <small class="text-success">
+                                {{ day.completed_count }} done
+                            </small>
+                        </div>
+                    {% endif %}
+                    
+                    {% if day.day %}
+                        <small class="text-muted">
+                            {{ day.completion_percentage }}%
+                        </small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="stats-summary">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4 class="fw-bold mb-3">Monthly Performance</h4>
+                    <div class="row g-4">
+                        <div class="col-6 col-md-3">
+                            <div class="text-center">
+                                <div class="display-5 fw-bold text-primary">{{ completed_days }}</div>
+                                <div class="text-muted">Completed Days</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="text-center">
+                                <div class="display-5 fw-bold text-success">{{ total_completed_habits }}</div>
+                                <div class="text-muted">Habits Done</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="text-center">
+                                <div class="display-5 fw-bold text-warning">{{ current_streak }}</div>
+                                <div class="text-muted">Day Streak</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="text-center">
+                                <div class="display-5 fw-bold" style="color: #8b5cf6;">{{ completion_rate }}%</div>
+                                <div class="text-muted">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 text-center">
+                    <div class="mb-3">
+                        {% if completion_rate >= 80 %}
+                            <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #10B981, #059669);">
+                                <i class="bi bi-trophy-fill"></i> Excellent Consistency!
+                            </span>
+                        {% elif completion_rate >= 50 %}
+                            <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                                <i class="bi bi-star-fill"></i> Good Progress
+                            </span>
+                        {% else %}
+                            <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+                                <i class="bi bi-lightbulb"></i> Room for Improvement
+                            </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted small">
+                        Keep up the good work! Consistency is key to building lasting habits.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add click animation to calendar days
+        document.querySelectorAll('.calendar-day:not(.empty)').forEach(day => {
+            day.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

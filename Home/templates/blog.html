@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Journal | HabitFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #EC4899;
+            --secondary: #8B5CF6;
+            --accent: #10B981;
+            --light: #f8fafc;
+            --dark: #1f2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #f5f3ff 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        
+        .journal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            border-radius: 0 0 30px 30px;
+            color: white;
+        }
+        
+        .journal-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+        }
+        
+        .journal-subtitle {
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 1rem auto;
+        }
+        
+        .journal-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: none;
+            transition: transform 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .journal-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .entry-date {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .entry-mood {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .mood-happy { background: rgba(16, 185, 129, 0.1); color: #059669; }
+        .mood-neutral { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+        .mood-sad { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+        
+        .entry-content {
+            line-height: 1.8;
+            color: #4b5563;
+        }
+        
+        .write-entry-card {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.05), rgba(139, 92, 246, 0.05));
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        .write-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .mood-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        
+        .mood-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mood-btn:hover, .mood-btn.active {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .journal-textarea {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 1.5rem;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .journal-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+        
+        .btn-journal-submit {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-journal-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
+        }
+        
+        .entry-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            margin: 4px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50px;
+            background: white;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .entry-tag:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .entry-tag.selected {
+            background: linear-gradient(135deg, #EC4899, #8B5CF6);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-to-dashboard {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-to-dashboard:hover {
+            color: var(--secondary);
+        }
+        
+        /* For displaying tags in entries */
+        .display-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        /* Add some visual feedback for form submission */
+        .form-submitting {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Back Button -->
+    <div class="container py-4">
+        <a href="{% url 'dashboard' %}" class="back-to-dashboard">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Journal Header -->
+    <div class="journal-header">
+        <div class="container text-center">
+            <h1 class="journal-title">My Daily Journal</h1>
+            <p class="journal-subtitle">
+                A private space for your thoughts, reflections, and emotional journey.
+                Track your growth alongside your habits.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}
+                    alert-dismissible fade show"
+             role="alert">
+
+            {{ message }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+
+        
+        <div class="row">
+            <!-- Left: Write New Entry -->
+            <div class="col-lg-8">
+                <div class="write-entry-card mb-4">
+                    <div class="write-icon">
+                        <i class="bi bi-pen-fill"></i>
+                    </div>
+                    <h3 class="mb-3">How are you feeling today?</h3>
+                    
+                    <!-- Mood Selector -->
+                    <div class="mb-4">
+                        <label class="form-label">Select your mood:</label>
+                        <div class="mood-selector">
+                            <button type="button" class="mood-btn" data-mood="happy">😊</button>
+                            <button type="button" class="mood-btn" data-mood="neutral">😐</button>
+                            <button type="button" class="mood-btn" data-mood="sad">😔</button>
+                            <button type="button" class="mood-btn" data-mood="excited">🤩</button>
+                            <button type="button" class="mood-btn" data-mood="calm">😌</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Journal Form -->
+                    <form method="post" id="journal-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea class="form-control journal-textarea" 
+                                      name="entry" 
+                                      id="journal-textarea"
+                                      placeholder="Write your thoughts here... What went well today? What are you grateful for? What would you like to improve?"
+                                      required></textarea>
+                        </div>
+                        
+                        <!-- Tags -->
+                        <div class="mb-4">
+                            <label class="form-label">Add tags:</label>
+                            <div id="tag-container">
+                                <button type="button" class="entry-tag" data-tag="gratitude">Gratitude</button>
+                                <button type="button" class="entry-tag" data-tag="reflection">Reflection</button>
+                                <button type="button" class="entry-tag" data-tag="goals">Goals</button>
+                                <button type="button" class="entry-tag" data-tag="challenges">Challenges</button>
+                                <button type="button" class="entry-tag" data-tag="achievements">Achievements</button>
+                                <button type="button" class="entry-tag" data-tag="learning">Learning</button>
+                                <button type="button" class="entry-tag" data-tag="inspiration">Inspiration</button>
+                            </div>
+                            <input type="hidden" name="tags" id="selected-tags">
+                        </div>
+                        
+                        <input type="hidden" name="mood" id="selected-mood" value="neutral">
+                        
+                        <button type="submit" class="btn-journal-submit" id="submit-btn">
+                            <i class="bi bi-save me-2"></i> Save Journal Entry
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Previous Entries -->
+                <div class="mb-4">
+                    <h3 class="mb-4">Previous Entries</h3>
+                    
+                    {% for entry in journal_entries %}
+                    <div class="journal-card p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <div class="entry-date">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ entry.date|date:"F d, Y" }}
+                                </div>
+                            </div>
+                            <div class="entry-mood {{ entry.mood_class }}">
+                                <i class="bi bi-{{ entry.mood_icon }}"></i>
+                                {{ entry.mood }}
+                            </div>
+                        </div>
+                        
+                        <p class="entry-content mb-3">{{ entry.content }}</p>
+                        
+                        {% if entry.tags %}
+                        <div class="mt-3">
+                            {% for tag in entry.tags %}
+                                <span class="display-tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Entry Actions -->
+                        <div class="mt-3 pt-3 border-top">
+                            <small class="text-muted">
+                                <i class="bi bi-word-count me-1"></i>{{ entry.word_count }} words
+                            </small>
+                            <div class="float-end">
+                                <a href="{% url 'edit_journal_entry' entry.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="{% url 'delete_journal_entry' entry.id %}" 
+                                   class="btn btn-sm btn-outline-danger ms-1"
+                                   onclick="return confirm('Delete this entry?')">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">No journal entries yet</h4>
+                        <p class="text-muted">Start by writing your first entry above!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Right: Stats & Info -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 20px;">
+                    <!-- Stats -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="stats-card">
+                                <div class="stats-number">{{ total_entries }}</div>
+                                <div class="text-muted">Total Entries</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stats-card">
+                                <div class="stats-number">{{ streak_days }}</div>
+                                <div class="text-muted">Day Streak</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stats-card">
+                                <div class="stats-number">{{ total_words }}</div>
+                                <div class="text-muted">Total Words</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stats-card">
+                                <div class="stats-number">{{ avg_words_per_entry }}</div>
+                                <div class="text-muted">Avg. Words</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mood Distribution -->
+                    <div class="journal-card p-4 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-emoji-smile text-primary me-2"></i>
+                            Mood This Month
+                        </h5>
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span>😊 Happy</span>
+                                <span class="fw-semibold">{{ happy_percentage }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: {{ happy_percentage }}%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span>😐 Neutral</span>
+                                <span class="fw-semibold">{{ neutral_percentage }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-warning" style="width: {{ neutral_percentage }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span>😔 Sad</span>
+                                <span class="fw-semibold">{{ sad_percentage }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-danger" style="width: {{ sad_percentage }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Popular Tags -->
+                    {% if popular_tags %}
+                    <div class="journal-card p-4 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-tags text-info me-2"></i>
+                            Popular Tags
+                        </h5>
+                        <div>
+                            {% for tag, count in popular_tags %}
+                                <span class="display-tag mb-2">{{ tag }} ({{ count }})</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Tips -->
+                    <div class="journal-card p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-lightbulb text-warning me-2"></i>
+                            Journaling Tips
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-3 d-flex align-items-start gap-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <span>Write regularly, even just a few lines</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-start gap-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <span>Focus on gratitude and positive moments</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-start gap-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <span>Be honest with yourself</span>
+                            </li>
+                            <li class="d-flex align-items-start gap-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <span>Review past entries to track growth</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Mood selection
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('selected-mood').value = this.getAttribute('data-mood');
+            });
+        });
+        
+        // Tag selection
+        document.querySelectorAll('.entry-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateSelectedTags();
+            });
+        });
+        
+        // Update selected tags function
+        function updateSelectedTags() {
+            const selectedTags = Array.from(document.querySelectorAll('.entry-tag.selected'))
+                .map(t => t.getAttribute('data-tag'));
+            document.getElementById('selected-tags').value = selectedTags.join(',');
+        }
+        
+        // Auto-expand textarea
+        const textarea = document.getElementById('journal-textarea');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        }
+        
+        // Form submission feedback
+        const journalForm = document.getElementById('journal-form');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        if (journalForm && submitBtn) {
+            journalForm.addEventListener('submit', function() {
+                // Show loading state
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Saving...';
+                submitBtn.classList.add('form-submitting');
+                submitBtn.disabled = true;
+            });
+        }
+        
+        // Word counter
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                const wordCount = this.value.trim().split(/\s+/).length;
+                const counter = document.getElementById('word-counter') || (function() {
+                    const counterEl = document.createElement('div');
+                    counterEl.id = 'word-counter';
+                    counterEl.className = 'text-muted small mt-1';
+                    textarea.parentNode.appendChild(counterEl);
+                    return counterEl;
+                })();
+                
+                counter.textContent = `${wordCount} word${wordCount !== 1 ? 's' : ''}`;
+            });
+        }
+        
+        // Initialize with neutral mood selected by default
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default mood to neutral
+            const neutralBtn = document.querySelector('.mood-btn[data-mood="neutral"]');
+            if (neutralBtn) {
+                neutralBtn.classList.add('active');
+            }
+            
+            // Initialize selected tags
+            updateSelectedTags();
+        });
+    </script>
+</body>
+</html>

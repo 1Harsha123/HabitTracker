@@ -1,0 +1,550 @@
+{% load form_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Habit | HabitFlow</title>
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1f2937;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .glass-form-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 2rem;
+            margin: -30px -30px 2rem -30px;
+            border-radius: 24px 24px 0 0;
+        }
+        
+        .form-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+        
+        .motivation-text {
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .form-control-custom {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-control-custom:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: white;
+        }
+        
+        .input-group-icon {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: var(--primary);
+            padding: 0 1rem;
+        }
+        
+        .input-group .form-control-custom {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .form-switch-custom .form-check-input {
+            width: 3.5em;
+            height: 1.8em;
+            border-color: #d1d5db;
+            cursor: pointer;
+        }
+        
+        .form-switch-custom .form-check-input:checked {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .habit-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .habit-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary);
+        }
+        
+        .habit-status {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .habit-status.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .habit-status.inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+        
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn.edit {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .action-btn.edit:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+        
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #f9fafb;
+            border-radius: 16px;
+            border: 2px dashed #d1d5db;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+        
+        .floating-back {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+        
+        .floating-back-btn {
+            background: white;
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .floating-back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #842029;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .success-message {
+            background-color: #d1fae5;          /* light green */
+            border: 1px solid #10b981;           /* strong green border */
+            color: #065f46;                      /* dark readable text */
+            padding: 0.85rem 1.1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .habit-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Floating Back Button -->
+<div class="floating-back">
+    <a href="{% url 'dashboard' %}" class="floating-back-btn" title="Back to Dashboard">
+        <i class="bi bi-arrow-left" style="font-size: 1.2rem;"></i>
+    </a>
+</div>
+
+<!-- Modern Navbar -->
+<nav class="navbar py-4">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                 style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.2);">
+                <i class="bi bi-check2-all text-white"></i>
+            </div>
+            <span>HabitFlow</span>
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+            {% if user.is_authenticated %}
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 36px; height: 36px; background: rgba(255, 255, 255, 0.2);">
+                        <span class="text-white fw-semibold">{{ user.username|first|upper }}</span>
+                    </div>
+                    <div class="text-white small d-none d-md-block">
+                        Welcome, {{ user.username|truncatechars:15 }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                        <i class="bi bi-{% if message.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %} me-2"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Add Habit Card -->
+            <div class="glass-form-card p-4 mb-5">
+                <div class="form-header">
+                    <h1 class="form-title">Create New Habit</h1>
+                    <p class="motivation-text">
+                        "Small habits, when repeated consistently, lead to extraordinary results."
+                    </p>
+                </div>
+
+                <form method="post" novalidate class="mt-2">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <!-- Habit Name -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-2 d-flex align-items-center gap-2">
+                            <i class="bi bi-pencil-square text-primary"></i>
+                            Habit Name
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-icon">
+                                <i class="bi bi-journal-text"></i>
+                            </span>
+                            {{ form.name|add_class:"form-control-custom" }}
+                        </div>
+                        {% if form.name.errors %}
+                            <div class="error-message mt-2">
+                                {{ form.name.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text mt-1">
+                            Choose a clear, specific name for your habit (e.g., "Morning Meditation", "Daily Reading")
+                        </div>
+                    </div>
+
+                    <!-- Active Toggle -->
+                    <div class="mb-5">
+                        <div class="form-check form-switch form-switch-custom d-flex align-items-center gap-3">
+                            {{ form.is_active|add_class:"form-check-input" }}
+                            <label class="form-check-label fw-semibold">
+                                <i class="bi bi-toggle-on text-success me-2"></i>
+                                Make Habit Active
+                            </label>
+                        </div>
+                        <div class="form-text mt-1 ms-5">
+                            Active habits will appear on your dashboard for daily tracking
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Create Habit
+                    </button>
+                </form>
+            </div>
+
+            <!-- User's Habits List -->
+            {% if user_habits %}
+                <div class="glass-form-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="form-label fw-bold mb-1" style="color: var(--primary);">
+                                <i class="bi bi-list-check me-2"></i>
+                                Your Habits
+                            </h3>
+                            <p class="text-muted mb-0">{{ user_habits|length }} habit{{ user_habits|length|pluralize }} created</p>
+                        </div>
+                        <span class="badge rounded-pill" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 0.5rem 1rem;">
+                            Total: {{ user_habits|length }}
+                        </span>
+                    </div>
+
+                    <div class="row g-3">
+                        {% for habit in user_habits %}
+                            <div class="col-12">
+                                <div class="habit-card">
+                                    <div class="row align-items-center">
+                                        <!-- Icon and Name -->
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="habit-icon">
+                                                    <i class="bi bi-{% cycle 'check-circle' 'heart' 'book' 'cup-straw' 'activity' 'alarm' %}"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold mb-1">{{ habit.name }}</h6>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="habit-status {% if habit.is_active %}active{% else %}inactive{% endif %}">
+                                                            <i class="bi bi-{% if habit.is_active %}check-circle{% else %}pause-circle{% endif %} me-1"></i>
+                                                            {% if habit.is_active %}Active{% else %}Inactive{% endif %}
+                                                        </span>
+                                                        <span class="text-muted small">
+                                                            Created: {{ habit.created_at|date:"M d, Y" }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div class="col-md-3">
+                                            <div class="text-center">
+                                                {% if habit.id in done_today %}
+                                                    <span class="badge rounded-pill"
+                                                        style="
+                                                            background: linear-gradient(135deg, var(--success), #0d9666);
+                                                            padding: 0.25rem 0.6rem;
+                                                            font-size: 0.75rem;
+                                                            font-weight: 500;
+                                                            margin-right: 44px;   /* ← KEY FIX */
+                                                            display: inline-block;
+                                                        ">
+                                                        Completed Today
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-muted"
+                                                        style="font-size: 0.75rem; margin-right: 10px;">
+                                                        Not Done Today
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Actions -->
+                                        <div class="col-md-3">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <a href="{% url 'tracker_edit' habit.id %}" 
+                                                   class="action-btn edit d-flex align-items-center gap-1">
+                                                    <i class="bi bi-pencil"></i>
+                                                    <span class="d-none d-md-inline">Edit</span>
+                                                </a>
+                                                <a href="{% url 'delete_habit' habit.id %}" 
+                                                   class="action-btn delete d-flex align-items-center gap-1"
+                                                   onclick="return confirm('Are you sure you want to delete \"{{ habit.name }}\"?');">
+                                                    <i class="bi bi-trash"></i>
+                                                    <span class="d-none d-md-inline">Delete</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-journal-plus"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">No Habits Yet</h4>
+                    <p class="text-muted mb-4">Start building your routine by creating your first habit!</p>
+                    <div class="d-inline-block">
+                        <div class="habit-icon mx-auto mb-3">
+                            <i class="bi bi-plus-lg"></i>
+                        </div>
+                        <p class="small text-muted">Use the form above to add your first habit</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<script>
+    // Add hover effect to social icons
+    document.addEventListener('DOMContentLoaded', function() {
+        const socialIcons = document.querySelectorAll('.social-icon');
+        
+        socialIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.1)';
+            });
+            
+            icon.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add tooltip effect for creator name
+        const creatorName = document.querySelector('.creator-name');
+        creatorName.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        creatorName.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add floating animation to habit cards
+        const habitCards = document.querySelectorAll('.habit-card');
+        habitCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('animate__animated', 'animate__fadeInUp');
+        });
+        
+        // Add focus effect to form inputs
+        const formInputs = document.querySelectorAll('.form-control-custom');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('input-group-focus');
+            });
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('input-group-focus');
+            });
+        });
+        
+        // Auto-hide messages after 5 seconds
+        const messages = document.querySelectorAll('.error-message, .success-message');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => message.remove(), 500);
+            }, 5000);
+        });
+    });
+</script>
+
+<!-- Animate.css for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+</body>
+</html>
