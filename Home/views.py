@@ -404,17 +404,25 @@ def habit_stats(request):
     # Current streak
     current_streak = 0
     check_date = today
+
     while True:
-        day_records = HabitRecord.objects.filter(
-            habit__user=request.user,
-            status=True,
-            date=check_date
-        )
-        if day_records.exists():
+        total_habits_for_day = habits.filter(
+            created_at__date__lte=check_date,
+            is_active=True
+        ).count()
+
+        completed_for_day = HabitRecord.objects.filter(
+            habit__in=habits,
+            date=check_date,
+            status=True
+        ).count()
+
+        if total_habits_for_day > 0 and completed_for_day == total_habits_for_day:
             current_streak += 1
             check_date -= timedelta(days=1)
         else:
             break
+
     # Streak change (compared to previous 30 days)
     prev_start_date = start_date - timedelta(days=30)
     prev_end_date = start_date - timedelta(days=1)
