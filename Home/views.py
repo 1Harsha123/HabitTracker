@@ -344,12 +344,24 @@ def calender(request):
     weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     current_streak = 0
     check_date = today
+
     while True:
-        if check_date in done_dates:
+        total_habits_for_day = habits.filter(
+            created_at__date__lte=check_date,
+            is_active=True
+        ).count()
+
+        completed_for_day = HabitRecord.objects.filter(
+            habit__in=habits,
+            date=check_date,
+            status=True
+        ).count()
+        if total_habits_for_day > 0 and completed_for_day == total_habits_for_day:
             current_streak += 1
             check_date -= timedelta(days=1)
         else:
             break
+
     context = {
         'calendar_data': calendar_data,
         'month': month,
