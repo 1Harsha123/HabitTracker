@@ -760,3 +760,17 @@ def delete_journal_entry(request, entry_id):
         'entry_to_delete': entry,
         'is_delete': True,
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
