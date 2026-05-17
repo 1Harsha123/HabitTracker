@@ -70,7 +70,7 @@ habit_tracker/
 
 1. Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/1Harsha123/HabitTracker.git
 cd habit_tracker
 
 2. python -m venv venv
