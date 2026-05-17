@@ -262,7 +262,7 @@ def today_habit_done(request, habit_id):
         date=timezone.localdate(),
         defaults={'status': True}
     )
-    messages.success(request, f"✅ '{habit.name}' marked as done!")
+    messages.success(request, f"✅ {habit.name} marked as done!")
     return redirect("dashboard")
 
 
